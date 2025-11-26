@@ -1,0 +1,10 @@
+# Java
+/target/
+*.iml
+
+# Node
+/node_modules/
+dist/
+
+# Project exclude paths
+/backend/target/
