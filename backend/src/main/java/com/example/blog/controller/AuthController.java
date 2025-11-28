@@ -7,7 +7,7 @@ import com.example.blog.repository.RefreshTokenRepository;
 import com.example.blog.security.JwtUtil;
 import com.example.blog.security.RefreshTokenService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
@@ -16,13 +16,13 @@ import java.util.*;
 public class AuthController {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;      // <- interface
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
 
     public AuthController(UserRepository userRepository,
-                          BCryptPasswordEncoder passwordEncoder,
+                          PasswordEncoder passwordEncoder,        // <- interface
                           JwtUtil jwtUtil,
                           RefreshTokenService refreshTokenService,
                           RefreshTokenRepository refreshTokenRepository) {
@@ -68,7 +68,6 @@ public class AuthController {
         return ResponseEntity.ok(res);
     }
 
-
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody Map<String,String> body) {
         String requestToken = body.get("refreshToken");
@@ -84,10 +83,10 @@ public class AuthController {
                     return ResponseEntity.ok(Map.of("token", token));
                 })
                 .orElseGet(() -> ResponseEntity.status(403)
-                        .body(Map.of("error", "Invalid refresh token"))); // <-- same Map<String,String> body
+                        .body(Map.of("error", "Invalid refresh token")));
     }
 
-        @PostMapping("/logout")
+    @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody Map<String,String> body) {
         String username = body.get("username");
         if(username!=null) {
